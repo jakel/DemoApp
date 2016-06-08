@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="col-sm-4">
+  <h4>Register</h4>
+  <hr />
+  <form action="" method="post">
+
+    {% from "_formhelpers.html" import render_field %}
+
+    {{ render_field(form.fullname, placeholder="Edward Teach") }}
+    {{ render_field(form.username, placeholder="blackbeard") }}
+
+    {{ render_field(form.password, placeholder="Password") }}
+    {{ render_field(form.password2, placeholder="Password") }}
+
+    {{ render_field(form.accept_tos, style="width:10px;") }}
+
+    <button type="submit" class="btn btn-danger">Register</button>
+  </form>
+</div>
+<div class="col-sm-8">
+  <img alt="Pirate Flag" src="{{ url_for('static', filename='img/Pirate-Flag.resized.png') }}" style="height:320px; float:right;" />
+</div>
+
+{% endblock %}

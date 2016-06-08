@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+
+<h1 style="text-align: center;">Welcome to Pirates Revenge!</h1>
+<hr />
+<div class="col-sm-3">
+    <a href="/login"><button type="button" class="btn btn-danger btn-lg">Login</button></a>
+</div>
+<div class="col-sm-6">
+  <img alt="Pirate Flag" class="img-responsive" src="{{ url_for('static', filename='img/Pirate-Flag.resized.png') }}" style="display:block; margin-left:auto; margin-right:auto;" />
+</div>
+<div class="col-sm-3">
+  <a href="/register"><button type="button" class="btn btn-warning btn-lg" style="float:right;">Register</button></a>
+  <p style="margin-top: 70px;">
+    Register for a new account to start playing Pirates Revege! A game developed while trying to learn python and MySQL.
+  </p>
+</div>
+{% endblock %}
