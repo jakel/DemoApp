@@ -10,7 +10,7 @@
       </button>
       <a class="navbar-brand"
       {% if session.user %}
-        href="/"
+        href="/fleets"
       {% else %}
         href="/"
       {% endif %}
@@ -45,10 +45,10 @@
         {% endif %}
       </ul>
       {% if session.user and session.user.balance %}
-        <p class="navbar-text navbar-right">Balance: <span style="color:white;">${{ session.user.balance }}</span></p>
+        <p class="navbar-text navbar-right">Balance: <span style="color:white;">{{ '{:,}R'.format(session.user.balance) }}</span></p>
       {% endif %}
-      {% if session.user and session.user.lvl %}
-        <p class="navbar-text navbar-right">Level: <span style="color:white;">{{ session.user.lvl }}</span></p>
+      {% if session.user and session.user.lvl >= 0 %}
+        <p class="navbar-text navbar-right">Level: <span style="color:white;">{{ '{0:.2f}'.format(session.user.lvl) }}</span></p>
       {% endif %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

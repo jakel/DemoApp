@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}{{ island['island_name'] }}{% endblock %}
+
+{% block content %}
+
+  <h2>{{ island['island_name'] }}</h2>
+  <hr />
+
+  <div class="col-sm-2">
+    <p>
+      <strong>Island Position: {{ island['pos_x'] }}, {{ island['pos_y'] }}</strong>
+      <br />
+      <a href="/map?x={{ ('{0:0>3}'.format(island['pos_x']))[:1] }}&y={{ ('{0:0>3}'.format(island['pos_y']))[:1] }}">Go to Map</a>
+    </p>
+  </div>
+  <div class="col-sm-10">
+    <h4>Fleets</h4>
+    <hr />
+    {% if fleets|length > 0 %}
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Status</th>
+            <th>Island</th>
+            <th>Travel Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fleet in fleets|sort(attribute='user_id') %}
+            <tr data-toggle="collapse" data-target="#fleet{{ fleet['fleet_num'] }}" class="accordion-toggle">
+              <th scope="row"> {{ fleet['username'] }}</th>
+              <td>{{ fleet['status'] }}</td>
+              <td>{{ island['island_name'] }}</td>
+              <td>{{ fleet['island_not_before'] }}</td>
+              <td style="width: 200px;">
+                {% if fleet['user_id'] == session.user.user_id %}
+                  <a href="/fleets/{{ fleet['fleet_num'] }}"><button type="button" class="btn btn-info">Info</button></a>
+                  <a href="/fleets/{{ fleet['fleet_num'] }}/move"><button type="button" class="btn btn-warning">Move</button></a>
+                {% else %}
+                  <a href="/fleets/{{ fleet['fleet_num'] }}/combat?target={{ fleet['fleet_id'] }}"><button type="button" class="btn btn-danger">Attack</button></a>
+                {% endif %}
+              </td>
+            </tr>
+            <tr >
+              <td colspan="5" class="hiddenRow">
+                <div class="accordian-body collapse" id="fleet{{ fleet['fleet_num'] }}">
+                  Ship Table would go here..
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p>There are no Fleets on this Island.</p>
+      {% endif %}
+  </div>
+
+{% endblock %}

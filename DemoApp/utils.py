@@ -31,3 +31,7 @@ class Map(dict):
     def __delitem__(self, key):
         super(Map, self).__delitem__(key)
         del self.__dict__[key]
+
+
+def row2dict(row):
+    return dict(zip(row.keys(), row))

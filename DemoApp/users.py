@@ -17,13 +17,14 @@ users = Table('users', metadata,
    Column('fullname', String(50)),
    Column('password', String(65)),
    Column('salt', String(12)),
-   Column('lvl', Integer),
+   Column('lvl', Float),
    Column('balance', Integer),
    Column('last_calculated', DateTime)
 )
 '''
 
 BALANCE_INC_PER_MINUTE = 10
+MAX_USER_LEVEL = 100
 
 @app.before_request
 def calulate_balance():
@@ -48,7 +49,7 @@ def calulate_balance():
         u = users.update() \
                            .values({users.c.balance: (result['balance'] + (num_min * BALANCE_INC_PER_MINUTE)),
                             users.c.last_calculated: datetime.now() - timedelta(seconds=remainder)}) \
-                            .where(users.c.id == result['id'])
+                            .where(users.c.user_id == result['user_id'])
 
         conn.execute(u)
         #print(session['user'])
@@ -71,7 +72,7 @@ def login():
         h = hashlib.sha256(result['salt'] + form.password.data).hexdigest()
         if result['password'] == h:
             session['user'] = {'username': result['username'], 'fullname': result['fullname'],
-                'lvl': result['lvl'], 'balance': result['balance'], 'id': result['id']}
+                'lvl': result['lvl'], 'balance': result['balance'], 'user_id': result['user_id']}
             return redirect(url_for('index'))
         #result.close()
         return render_template('login.html', form=form, error="Invalid Username Or Password")
@@ -90,7 +91,7 @@ def register():
         h = hashlib.sha256(salt + form.password.data).hexdigest()
         print(salt, h)
         ins = users.insert().values(username=form.username.data, fullname=form.fullname.data,
-            password=h, salt=salt, lvl=1, balance=5000, last_calculated=datetime.now())
+            password=h, salt=salt, lvl=0, balance=5500, last_calculated=datetime.now())
         conn = engine.connect()
         result = conn.execute(ins)
         #Need to catch errors
@@ -101,12 +102,26 @@ def register():
 
 def _get_user():
     conn = engine.connect()
-    s = select([users]).where(users.c.id == session['user']['id'])
+    s = select([users]).where(users.c.user_id == session['user']['user_id'])
     result = conn.execute(s).fetchone()
     return result
 
 def _set_user_balance(conn, user_id=None, balance=None):
-    conn.execute(users.update().where(users.c.id == user_id), balance=balance)
+    conn.execute(users.update().where(users.c.user_id == user_id), balance=balance)
     new_session = session['user']
     new_session['balance'] = balance
     session['user'] = new_session
+
+def _set_user_level(conn, user_id=None, level=None):
+    conn.execute(users.update().where(users.c.user_id == user_id), lvl=level)
+    new_session = session['user']
+    new_session['lvl'] = level
+    session['user'] = new_session
+
+def _get_username_by_id(user_id):
+    s = select([users]).where(users.c.user_id == user_id)
+    conn = engine.connect()
+    user = conn.execute(s).fetchone()
+    if user is None:
+        return ''
+    return user['username']

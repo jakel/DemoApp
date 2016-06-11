@@ -2,41 +2,80 @@
 {% block title %}Fleets{% endblock %}
 
 {% block content %}
+<div class="col-sm-12">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, msg in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      {{ msg }}
+    </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+</div>
 <div class="col-sm-2">
- <a href="/fleets/new"><button type="button" class="btn btn-lg btn-primary">New Fleet</button></a>
+ <button type="button" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#newFleet" style="margin-top:15px;">New Fleet</button>
 </div>
 
 <div class="col-sm-10">
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Username</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2>Fleets</h2>
+  <hr />
+  {% if fleets|length > 0 %}
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Status</th>
+          <th>Island</th>
+          <th>Travel Time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fleet in fleets|sort(attribute='fleet_num') %}
+          <tr data-toggle="collapse" data-target="#fleet{{ fleet['fleet_num'] }}" class="accordion-toggle">
+            <th scope="row"> {{ fleet['fleet_num'] }}</th>
+            <td>{{ fleet['status'] }}</td>
+            <td><a href="/map/island/{{ fleet['island_name'] }}">{{ fleet['island_name'] }}</a></td>
+            <td>{{ fleet['island_not_before'] }}</td>
+            <td style="width: 200px;">
+              <a href="/fleets/{{ fleet['fleet_num'] }}"><button type="button" class="btn btn-info">Info</button></a>
+              <a href="/fleets/{{ fleet['fleet_num'] }}/shipyard"><button type="button" class="btn btn-success">Build</button></a>
+              <a href="/fleets/{{ fleet['fleet_num'] }}/move"><button type="button" class="btn btn-warning">Move</button></a>
+            </td>
+          </tr>
+          <tr >
+            <td colspan="5" class="hiddenRow">
+              <div class="accordian-body collapse" id="fleet{{ fleet['fleet_num'] }}">
+                Ship Table would go here..
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>You have no Fleets! Create one now.</p>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="newFleet" tabindex="-1" role="dialog" aria-labelledby="newFleetLable">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="newFleetLable">New Fleet</h4>
+      </div>
+      <div class="modal-body">
+        <p>It will cost you {{ next_fleet_cost }} to create your next fleet. Are you sure you want to create it?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a href="/fleets/new"><button type="button" class="btn btn-primary">Create Fleet!</button></a>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

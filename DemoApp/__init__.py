@@ -32,6 +32,8 @@ def main(options, env='dev'):
     from DemoApp.main import index
     import DemoApp.users
     import DemoApp.fleets
+    import DemoApp.ships
+    import DemoApp.map
 
     # start the app
     app.run(host='0.0.0.0', debug=options.debug)
