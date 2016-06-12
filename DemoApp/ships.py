@@ -49,7 +49,7 @@ def calulate_level():
         return None
     user = _get_user()
     print(user)
-    s = text("SELECT fs.ship_type, s.power as power, SUM(fs.number) as number from fleet_ships fs, ships s, fleets f \
+    s = text("SELECT fs.ship_type, MAX(s.power) as power, SUM(fs.number) as number from fleet_ships fs, ships s, fleets f \
     WHERE fs.ship_type = s.type and fs.fleet_id = f.fleet_id and f.user_id = %d and fs.status = \"ACTIVE\" \
     group by fs.ship_type" % (user['user_id']))
     conn = engine.connect()
@@ -124,7 +124,7 @@ def _load_ships_for_fleet(fleet_id):
     completed = []
     in_progress = []
     #sc = select([fleet_ships]).where(fleet_ships.c.fleet_id == fleet_id).where
-    sc = text("SELECT fs.ship_type, s.power as power, SUM(fs.number) as number from fleet_ships fs, ships s \
+    sc = text("SELECT fs.ship_type, MAX(s.power) as power, SUM(fs.number) as number from fleet_ships fs, ships s \
     WHERE fs.ship_type = s.type and fs.fleet_id = %d and fs.status = \"ACTIVE\" group by fs.ship_type \
     order by s.power" % (fleet_id))
     conn = engine.connect()
