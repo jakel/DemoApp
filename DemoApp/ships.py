@@ -60,8 +60,8 @@ def calulate_level():
             total_power = total_power + (row['power'] * row['number'])
     if total_power == 0:
         return None
-    new_lvl = MAX_USER_LEVEL * (total_power / float(total_power + POWER_LEVEL_DAMPENER))
-
+    new_lvl = MAX_USER_LEVEL * (total_power / (total_power + POWER_LEVEL_DAMPENER))
+    new_lvl = float(new_lvl)
     if new_lvl != user['lvl']:
         _set_user_level(conn, user['user_id'], new_lvl)
     return None
